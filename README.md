@@ -8,7 +8,11 @@ Anything log line that fails to be turned into a metric or dimension will appear
 
 # How it works under the hood
 
-Consider a log line as such:
+Consider a log line:
+
+09-14-2017 15:35:59.246 +0100 INFO  Metrics - group=udpin_connections, *:4006, sourcePort=4006, _udp_bps=0.00, _udp_kbps=0.00, _udp_avg_thruput=0.00, _udp_kprocessed=0.00, _udp_eps=0.00
+
+This could be considered to be formatted like this:
 
 <event_date> <event_preamble>, <attribute=value_number>, <attribute=value_string>, <attribute=value_number>
  
