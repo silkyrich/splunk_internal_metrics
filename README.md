@@ -9,20 +9,25 @@ Anything log line that fails to be turned into a metric or dimension will appear
 # How it works under the hood
 
 Consider a log line as such:
+
 <date> <preamble>, <attribute=value_number>, <attribute=value_string>, <attribute=value_number>
  
 The date is parsed, so we don’t need it any more. We look at the preamble to create the metric_prefix. We scan the log line looking for attributes with a string values and then write these as indexed fields into _meta to become dimensions.
  
 We transform the log line with regex to look like this:
+
 <metric_prefix>#<attribute=value_number>, <attribute=value_string>, <attribute=value_number>
  
-We clone the above line to pop the first attribute pair
+We clone the above line to pop the first attribute pair:
+
 <metric_prefix>#<attribute=<attribute=value_string>, <attribute=value_number>
  
 We clone again:
+
 <metric_prefix>#<attribute=<attribute=value_number>
  
 We clone again, but regex fails so we write “finished” into the _raw:
+
 finished
  
 We have now the original event and four modified and cloned events:
