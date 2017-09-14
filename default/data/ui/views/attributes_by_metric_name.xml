@@ -1,0 +1,22 @@
+<dashboard>
+  <label>attributes by metric name</label>
+  <row>
+    <panel>
+      <table>
+        <search>
+          <query>| mstats count where metric_name=* by attribute metric_name | stats sum(count) as readings values(metric_name) by attribute</query>
+          <earliest>-15m</earliest>
+          <latest>now</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="count">100</option>
+        <option name="dataOverlayMode">none</option>
+        <option name="drilldown">none</option>
+        <option name="percentagesRow">false</option>
+        <option name="rowNumbers">false</option>
+        <option name="totalsRow">false</option>
+        <option name="wrap">true</option>
+      </table>
+    </panel>
+  </row>
+</dashboard>

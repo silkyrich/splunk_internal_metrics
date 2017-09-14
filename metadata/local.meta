@@ -1,0 +1,44 @@
+[app/ui]
+version = 7.0.0
+modtime = 1505229361.640342000
+
+[app/launcher]
+version = 7.0.0
+modtime = 1505229361.644090000
+
+[indexes/metrics]
+owner = admin
+version = 7.0.0
+modtime = 1503656442.677955000
+
+[indexes/_metrics]
+version = 7.0.0
+modtime = 1503657161.568899000
+
+[indexes/main_metrics]
+owner = admin
+version = 7.0.0
+modtime = 1505076993.082077000
+
+[indexes/temp]
+owner = admin
+version = 7.0.0
+modtime = 1505077014.606599000
+
+[views/attributes_by_metric_name]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 7.0.0
+modtime = 1505228977.632898000
+
+[views/sample_reports]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 7.0.0
+modtime = 1505228995.570056000
+
+[app/package/check_for_updates]
+version = 7.0.0
+modtime = 1505229361.645803000
