@@ -21,11 +21,11 @@ finished
  
 We have now the original event and four modified and cloned events:
  
-1 <date> <preamble>, <attribute=value_number>, <attribute=value_string>, <attribute=value_number>
-2 <metric.name>#<attribute=value_number>, <attribute=value_string>, <attribute=value_number>
-3 <metric.name>#<attribute=<attribute=value_string>, <attribute=value_number>
-4 <metric.name>#<attribute=<attribute=value_number>
-5 finished
+1. <date> <preamble>, <attribute=value_number>, <attribute=value_string>, <attribute=value_number>
+2. <metric.name>#<attribute=value_number>, <attribute=value_string>, <attribute=value_number>
+3. <metric.name>#<attribute=<attribute=value_string>, <attribute=value_number>
+4. <metric.name>#<attribute=<attribute=value_number>
+5. finished
  
 Actions now are
  
