@@ -1,0 +1,137 @@
+<form>
+  <label>Exploration</label>
+  <fieldset submitButton="false"></fieldset>
+  <row>
+    <panel>
+      <title>Metrics aggregate, select name, period and aggregation function</title>
+      <input type="dropdown" token="metric_name_binding">
+        <label>1. Select metric by name</label>
+        <fieldForLabel>metric_name</fieldForLabel>
+        <fieldForValue>metric_name</fieldForValue>
+        <search>
+          <query>| mstats count as samples where metric_name=* by metric_name | fields + metric_name</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+      </input>
+      <input type="time" token="time_binding">
+        <label>2. Select time period</label>
+        <default>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </default>
+      </input>
+      <input type="dropdown" token="aggregator_binding">
+        <label>3. Select aggregating function</label>
+        <choice value="avg">average</choice>
+        <choice value="median">median</choice>
+        <choice value="count">count</choice>
+        <choice value="sum">sum</choice>
+        <choice value="sumsq">sumsq</choice>
+        <choice value="stdev">stdev</choice>
+        <choice value="stdevp">stdevp</choice>
+        <choice value="range">range</choice>
+        <choice value="max">max</choice>
+        <choice value="min">min</choice>
+        <choice value="var">var</choice>
+        <choice value="varp">varp</choice>
+        <choice value="latest">latest</choice>
+        <choice value="earliest">earliest</choice>
+        <choice value="perc75">perc75</choice>
+        <choice value="perc90">perc90</choice>
+        <choice value="perc95">perc95</choice>
+        <choice value="perc99">perc99</choice>
+        <choice value="upperperc75">upperperc75</choice>
+        <choice value="upperperc90">upperperc90</choice>
+        <choice value="upperperc95">upperperc95</choice>
+        <choice value="upperperc99">upperperc99</choice>
+        <default>avg</default>
+      </input>
+      <single>
+        <search>
+          <query>| mstats $aggregator_binding$(_value) where metric_name=$metric_name_binding$</query>
+          <earliest>$time_binding.earliest$</earliest>
+          <latest>$time_binding.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Aggregate subdivided by dimension</title>
+      <input type="dropdown" token="dimension" searchWhenChanged="true">
+        <label>4. Select dimension</label>
+        <fieldForLabel>dimensions</fieldForLabel>
+        <fieldForValue>dimensions</fieldForValue>
+        <search>
+          <query>| mcatalog values(_dims) as dimensions where metric_name=$metric_name_binding$ by metric_name 
+| eval dimensions=mvfilter(!match(dimensions, "date_*")) 
+| eval dimensions=mvfilter(!match(dimensions, "group")) 
+| eval dimensions=mvfilter(!match(dimensions, "attribute"))
+| mvexpand dimensions
+| fields - metric_name</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+      </input>
+      <chart>
+        <search>
+          <query>| mstats prestats=t $aggregator_binding$(_value) where metric_name=$metric_name_binding$ by $dimension$ | chart $aggregator_binding$(_value) by $dimension$</query>
+          <earliest>$time_binding.earliest$</earliest>
+          <latest>$time_binding.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.chart">pie</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <title>Aggregate over time</title>
+      <input type="text" token="span_binding_value">
+        <label>4. Select periodicity value</label>
+      </input>
+      <input type="dropdown" token="span_binding_units">
+        <label>5. Select periodicity units</label>
+        <choice value="sec">seconds</choice>
+        <choice value="min">minuites</choice>
+        <choice value="hr">hours</choice>
+        <choice value="day">days</choice>
+        <choice value="weeks">weeks</choice>
+      </input>
+      <chart>
+        <search>
+          <query>| mstats prestats=t $aggregator_binding$(_value) where metric_name=$metric_name_binding$ span=$span_binding_value$$span_binding_units$
+| chart limit=100 $aggregator_binding$(_value) by _time</query>
+          <earliest>$time_binding.earliest$</earliest>
+          <latest>$time_binding.latest$</latest>
+          <sampleRatio>1</sampleRatio>
+        </search>
+        <option name="charting.chart">column</option>
+        <option name="charting.chart.stackMode">stacked</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <title>Aggregate function applied by time and divided by dimension</title>
+      <chart>
+        <search>
+          <query>| mstats prestats=t $aggregator_binding$(_value) where metric_name=$metric_name_binding$ by $dimension$ span=$span_binding_value$$span_binding_units$
+| chart limit=100 $aggregator_binding$(_value) by _time $dimension$</query>
+          <earliest>$time_binding.earliest$</earliest>
+          <latest>$time_binding.latest$</latest>
+        </search>
+        <option name="charting.chart">area</option>
+        <option name="charting.drilldown">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+</form>

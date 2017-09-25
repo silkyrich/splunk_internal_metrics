@@ -1,10 +1,10 @@
 [app/ui]
 version = 7.0.0
-modtime = 1505229361.640342000
+modtime = 1506369969.989885000
 
 [app/launcher]
 version = 7.0.0
-modtime = 1505229361.644090000
+modtime = 1506369969.994849000
 
 [indexes/metrics]
 owner = admin
@@ -41,4 +41,11 @@ modtime = 1505228995.570056000
 
 [app/package/check_for_updates]
 version = 7.0.0
-modtime = 1505229361.645803000
+modtime = 1506369969.996159000
+
+[views/exploration]
+access = read : [ * ], write : [ admin ]
+export = none
+owner = admin
+version = 7.0.0
+modtime = 1506369407.243612000
