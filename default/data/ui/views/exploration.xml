@@ -47,9 +47,12 @@
         <choice value="upperperc99">upperperc99</choice>
         <default>avg</default>
       </input>
+    </panel>
+    <panel depends="$aggregator_binding$, $metric_name_binding$">
+      <title>$aggregator_binding$($metric_name_binding$)</title>
       <single>
         <search>
-          <query>| mstats $aggregator_binding$(_value) where metric_name=$metric_name_binding$</query>
+          <query>| mstats $aggregator_binding$(_value) as value where metric_name=$metric_name_binding$</query>
           <earliest>$time_binding.earliest$</earliest>
           <latest>$time_binding.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -60,7 +63,7 @@
     </panel>
   </row>
   <row>
-    <panel>
+    <panel depends="$aggregator_binding$, $metric_name_binding$">
       <title>Aggregate subdivided by dimension</title>
       <input type="dropdown" token="dimension" searchWhenChanged="true">
         <label>4. Select dimension</label>
@@ -77,7 +80,8 @@
           <latest>now</latest>
         </search>
       </input>
-      <chart>
+      <chart depends="$aggregator_binding$, $metric_name_binding$, $dimension$">
+        <title>$aggregator_binding$($metric_name_binding$) by $dimension$</title>
         <search>
           <query>| mstats prestats=t $aggregator_binding$(_value) where metric_name=$metric_name_binding$ by $dimension$ | chart $aggregator_binding$(_value) by $dimension$</query>
           <earliest>$time_binding.earliest$</earliest>
@@ -90,7 +94,7 @@
         <option name="refresh.display">progressbar</option>
       </chart>
     </panel>
-    <panel>
+    <panel depends="$aggregator_binding$, $metric_name_binding$">
       <title>Aggregate over time</title>
       <input type="text" token="span_binding_value">
         <label>4. Select periodicity value</label>
@@ -103,7 +107,7 @@
         <choice value="day">days</choice>
         <choice value="weeks">weeks</choice>
       </input>
-      <chart>
+      <chart depends="$aggregator_binding$, $metric_name_binding$, $span_binding_units$, $span_binding_value$">
         <search>
           <query>| mstats prestats=t $aggregator_binding$(_value) where metric_name=$metric_name_binding$ span=$span_binding_value$$span_binding_units$
 | chart limit=100 $aggregator_binding$(_value) by _time</query>
@@ -119,7 +123,7 @@
     </panel>
   </row>
   <row>
-    <panel>
+    <panel depends="$aggregator_binding$, $metric_name_binding$, $span_binding_value$, $span_binding_units$, $dimension$">
       <title>Aggregate function applied by time and divided by dimension</title>
       <chart>
         <search>
