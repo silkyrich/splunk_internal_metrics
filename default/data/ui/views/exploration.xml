@@ -110,7 +110,7 @@
       <chart depends="$aggregator_binding$, $metric_name_binding$, $span_binding_units$, $span_binding_value$">
         <search>
           <query>| mstats prestats=t $aggregator_binding$(_value) where metric_name=$metric_name_binding$ span=$span_binding_value$$span_binding_units$
-| chart limit=100 $aggregator_binding$(_value) by _time</query>
+| chart $aggregator_binding$(_value) by _time</query>
           <earliest>$time_binding.earliest$</earliest>
           <latest>$time_binding.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -133,6 +133,7 @@
           <latest>$time_binding.latest$</latest>
         </search>
         <option name="charting.chart">area</option>
+        <option name="charting.chart.stackMode">stacked</option>
         <option name="charting.drilldown">none</option>
         <option name="refresh.display">progressbar</option>
       </chart>
