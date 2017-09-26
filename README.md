@@ -1,6 +1,6 @@
 # splunk_internal_metrics
 
-A Splunk app that transforms varies Splunk generated metrics values into a metrics store. This is achieved by cloning events in the pipeline and transforming them in the process. This allows us to ingest the same event multiple times and each time it has been modified to be a little different.
+This is a Splunk app that transforms various Splunk generated metrics values into a metrics store. This is achieved by cloning events in the pipeline and transforming them in the process. This allows us to ingest the same event multiple times and each time it has been modified to be a little different.
 
 Any log file that contains AV pair where the value is a string, it is used as dimension, and any AV pair where the value is a number is accepted as a value (with the dimensions included).
 
