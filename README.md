@@ -6,6 +6,8 @@ Any log file that contains AV pair where the value is a string, it is used as di
 
 Anything log line that fails to be turned into a metric or dimension will appear in metrics_internal_spam. Anything that is successfully converted to a metric will be stored in metrics_internal.
 
+NOTE: The indexing of your metrics logs with this application will increase your license usage, as the target index "metrics_internal" is NOT a splunk internal index. 
+
 # How it works under the hood
 
 Consider a log line:
