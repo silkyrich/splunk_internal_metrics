@@ -4,7 +4,7 @@ This is a Splunk app that transforms various Splunk generated metrics values int
 
 Any log file that contains AV pair where the value is a string, it is used as dimension, and any AV pair where the value is a number is accepted as a value (with the dimensions included).
 
-Anything log line that fails to be turned into a metric or dimension will appear in metrics_internal_spam. Anything that is successfully converted to a metric will be stored in metrics_internal.
+Anything log line that fails to be turned into a metric or dimension will appear in metrics_internal_spam. Anything that is successfully converted to a metric will be stored in metrics_internal things that don't conform to the final metric format is moved into the metrics_internal_detritus index.
 
 NOTE: The indexing of your metrics logs with this application will increase your license usage, as the target index "metrics_internal" is NOT a splunk internal index. 
 
@@ -51,3 +51,5 @@ Actions now are
 3. parse this into a metric = <metric.name>.<attribute>=value_string, it’s a string so route to nullQueue
 4. parse this into a metric = <metric.name>.<attribute>=value_number, it’s a number so write to metric store
 5. this is “finished” so route to nullQueue
+
+JSON files are different, we rely on the indexed extractions to do the hard work of parsing the json into a indexed fields. We then copy this data out of the meta field into raw field, carefully leaving behind the default time extractions. The raw field is then processed in the same manor as above accept the = becomes a :: 
