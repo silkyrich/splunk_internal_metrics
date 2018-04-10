@@ -4,25 +4,48 @@
   <row>
     <panel>
       <title>Metrics aggregate, select name, period and aggregation function</title>
-      <input type="dropdown" token="metric_name_binding">
-        <label>1. Select metric by name</label>
-        <fieldForLabel>metric_name</fieldForLabel>
-        <fieldForValue>metric_name</fieldForValue>
+      <input type="multiselect" token="index_filter">
+        <label>1. Select metrics index</label>
+        <choice value="*">*</choice>
+        <default>metrics_internal</default>
+        <fieldForLabel>index</fieldForLabel>
+        <fieldForValue>index</fieldForValue>
         <search>
-          <query>| mstats count as samples where metric_name=* by metric_name | fields + metric_name</query>
+          <query>| rest "/services/data/indexes?datatype=metric"
+| stats list(title) as index
+| mvexpand index</query>
           <earliest>-24h@h</earliest>
           <latest>now</latest>
         </search>
+        <prefix>(</prefix>
+        <initialValue>metrics_internal</initialValue>
+        <suffix>)</suffix>
+        <delimiter> OR </delimiter>
+        <valuePrefix>index=</valuePrefix>
+      </input>
+      <input type="multiselect" token="metric_name_binding">
+        <label>2. Select metric by name</label>
+        <fieldForLabel>metric_name</fieldForLabel>
+        <fieldForValue>metric_name</fieldForValue>
+        <search>
+          <query>| mstats count as samples where $index_filter$ metric_name=* by metric_name | fields + metric_name</query>
+          <earliest>-24h@h</earliest>
+          <latest>now</latest>
+        </search>
+        <valuePrefix>metric_name=</valuePrefix>
+        <delimiter> OR </delimiter>
+        <prefix>(</prefix>
+        <suffix>)</suffix>
       </input>
       <input type="time" token="time_binding">
-        <label>2. Select time period</label>
+        <label>3. Select time period</label>
         <default>
           <earliest>-24h@h</earliest>
           <latest>now</latest>
         </default>
       </input>
       <input type="dropdown" token="aggregator_binding">
-        <label>3. Select aggregating function</label>
+        <label>4. Select aggregating function</label>
         <choice value="avg">average</choice>
         <choice value="median">median</choice>
         <choice value="count">count</choice>
@@ -52,7 +75,7 @@
       <title>$aggregator_binding$($metric_name_binding$)</title>
       <single>
         <search>
-          <query>| mstats $aggregator_binding$(_value) as value where metric_name=$metric_name_binding$</query>
+          <query>| mstats $aggregator_binding$(_value) as value where $index_filter$ $metric_name_binding$</query>
           <earliest>$time_binding.earliest$</earliest>
           <latest>$time_binding.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -70,7 +93,7 @@
         <fieldForLabel>dimensions</fieldForLabel>
         <fieldForValue>dimensions</fieldForValue>
         <search>
-          <query>| mcatalog values(_dims) as dimensions where metric_name=$metric_name_binding$ by metric_name 
+          <query>| mcatalog values(_dims) as dimensions where $index_filter$ $metric_name_binding$ by metric_name 
 | eval dimensions=mvfilter(!match(dimensions, "date_*")) 
 | eval dimensions=mvfilter(!match(dimensions, "group")) 
 | eval dimensions=mvfilter(!match(dimensions, "attribute"))
@@ -83,7 +106,8 @@
       <chart depends="$aggregator_binding$, $metric_name_binding$, $dimension$">
         <title>$aggregator_binding$($metric_name_binding$) by $dimension$</title>
         <search>
-          <query>| mstats prestats=t $aggregator_binding$(_value) where metric_name=$metric_name_binding$ by $dimension$ | chart $aggregator_binding$(_value) by $dimension$</query>
+          <query>| mstats prestats=t $aggregator_binding$(_value) where $index_filter$ $metric_name_binding$ by $dimension$ 
+| chart $aggregator_binding$(_value) by $dimension$</query>
           <earliest>$time_binding.earliest$</earliest>
           <latest>$time_binding.latest$</latest>
           <sampleRatio>1</sampleRatio>
@@ -110,7 +134,7 @@
       <chart depends="$aggregator_binding$, $metric_name_binding$, $span_binding_units$, $span_binding_value$">
         <title>timechart span=$span_binding_value$$span_binding_units$ $aggregator_binding$($metric_name_binding$)</title>
         <search>
-          <query>| mstats prestats=t $aggregator_binding$(_value) where metric_name=$metric_name_binding$ span=$span_binding_value$$span_binding_units$
+          <query>| mstats prestats=t $aggregator_binding$(_value) where $index_filter$ $metric_name_binding$ span=$span_binding_value$$span_binding_units$
 | timechart $aggregator_binding$(_value) span=$span_binding_value$$span_binding_units$</query>
           <earliest>$time_binding.earliest$</earliest>
           <latest>$time_binding.latest$</latest>
@@ -129,7 +153,7 @@
       <chart>
         <title>timechart span=$span_binding_value$$span_binding_units$ $aggregator_binding$($metric_name_binding$) by $dimension$</title>
         <search>
-          <query>| mstats prestats=t $aggregator_binding$(_value) where metric_name=$metric_name_binding$ by $dimension$ span=$span_binding_value$$span_binding_units$
+          <query>| mstats prestats=t $aggregator_binding$(_value) where $index_filter$ $metric_name_binding$ by $dimension$ span=$span_binding_value$$span_binding_units$
 | timechart limit=1000 span=$span_binding_value$$span_binding_units$ $aggregator_binding$(_value) by $dimension$</query>
           <earliest>$time_binding.earliest$</earliest>
           <latest>$time_binding.latest$</latest>
